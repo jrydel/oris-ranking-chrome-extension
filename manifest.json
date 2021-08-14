@@ -1,0 +1,19 @@
+{
+  "name": "OrisRVP",
+  "version": "1.0",
+  "manifest_version": 3,
+  "icons": {
+    "128": "/images/icon.png"
+  },
+  "action": {
+    "default_icon": {
+      "128": "/images/icon.png"
+    }
+  },
+  "content_scripts": [
+    {
+        "matches": [ "https://oris.orientacnisporty.cz/PrehledPrihlasenych?id=*" ],
+        "js": [ "content.js" ]
+    }
+  ]
+}
