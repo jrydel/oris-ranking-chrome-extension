@@ -73,3 +73,24 @@ export function normalizeString(text?: string) {
 		.replace(/  |\r\n|\n|\r/gm, '')
 		.toLowerCase();
 }
+
+export function createOrUpdateNotificationBar(text: string) {
+	var div = document.querySelector('#rvp-notification-bar');
+	if (!div) {
+		div = document.createElement('div');
+		div.id = 'rvp-notification-bar';
+		div.classList.add('notification-container');
+		document.body.appendChild(div);
+
+		const img = document.createElement('img');
+		img.setAttribute('src', chrome.runtime.getURL('images/icon.png'));
+		img.classList.add('rvp-notification-bar-image');
+		div.appendChild(img);
+
+		const span = document.createElement('span');
+		span.innerHTML = text;
+		div.appendChild(span);
+	} else {
+		div.querySelector('span').innerText = text;
+	}
+}

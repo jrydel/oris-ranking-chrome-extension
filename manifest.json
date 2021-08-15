@@ -1,0 +1,36 @@
+{
+	"name": "oris-ranking-chrome-extension",
+	"version": "1.0",
+	"manifest_version": 3,
+	"icons": {
+		"128": "/images/icon.png"
+	},
+	"web_accessible_resources": [
+		{
+			"resources": ["images/icon.png"],
+			"matches": ["<all_urls>"]
+		}
+	],
+	"action": {
+		"default_icon": {
+			"128": "/images/icon.png"
+		},
+		"default_popup": "popup.html"
+	},
+	"background": {
+		"service_worker": "background.js"
+	},
+	"content_scripts": [
+		{
+			"matches": ["https://oris.orientacnisporty.cz/PrehledPrihlasenych?id=*"],
+			"js": ["entries.js"],
+			"css": ["index.css"]
+		},
+		{
+			"matches": ["https://oris.orientacnisporty.cz/Vysledky?id=*"],
+			"js": ["results.js"],
+			"css": ["index.css"]
+		}
+	],
+	"permissions": ["storage", "alarms"]
+}

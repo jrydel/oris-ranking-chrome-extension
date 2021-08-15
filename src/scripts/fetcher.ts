@@ -6,6 +6,22 @@ export async function getEvent(eventId: number): Promise<Event> {
 	return data.Data;
 }
 
+export async function getRankingDates() {
+	const data = await requestText('https://oris.orientacnisporty.cz/Ranking');
+
+	const temp = data.split('<select name="date" id="date" class="form-control form-control-sm mr-5">')[1].split('</select>')[0];
+	const regexp = /\d{4}-\d{2}-\d{2}/g;
+	const matches = temp.matchAll(regexp);
+
+	const result: string[] = [];
+	for (const match of matches) {
+		const item = match[0];
+		if (result.indexOf(item) === -1) result.push(item);
+	}
+
+	return result;
+}
+
 export async function getRanking(eventYear: number, rankingDate: string): Promise<Athlete[]> {
 	const [maleData, femaleData] = await Promise.all([fetchRanking(rankingDate, 'M'), fetchRanking(rankingDate, 'F')]);
 	const registration = await getRegistration(eventYear);
@@ -44,6 +60,7 @@ async function fetchRanking(date: string, gender: 'M' | 'F') {
 }
 
 async function requestText(url: string): Promise<string> {
+	console.log(`oris-ranking-chrome-extension - fetching: ${url}`);
 	const response = await fetch(url, {
 		method: 'GET',
 		headers: {
@@ -55,6 +72,7 @@ async function requestText(url: string): Promise<string> {
 }
 
 async function requestApi<T>(url: string): Promise<ApiResponse<T>> {
+	console.log(`oris-ranking-chrome-extension - fetching: ${url}`);
 	const response = await fetch(url, {
 		method: 'GET',
 		headers: {

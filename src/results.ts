@@ -1,7 +1,10 @@
-import { computeResults } from './compute';
-import { getEvent, getRanking } from './fetcher';
+import { computeResults } from './scripts/compute';
+import { getEvent, getRanking } from './scripts/fetcher';
+import { createOrUpdateNotificationBar } from './scripts/utils';
 
 async function process() {
+	createOrUpdateNotificationBar('Nacitam data z ORISU ...');
+
 	const eventId = parseInt(location.href.split('=')[1]);
 	const event = await getEvent(eventId);
 
@@ -11,6 +14,8 @@ async function process() {
 
 	const tables = document.querySelectorAll('tbody');
 	tables.forEach((table, index) => computeResults(index, table, ranking));
+
+	createOrUpdateNotificationBar('Spocitano');
 }
 
 process();

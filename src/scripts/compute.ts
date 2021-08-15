@@ -1,7 +1,9 @@
 import { Athlete } from './types';
-import { normalizeString } from './utils';
+import { createOrUpdateNotificationBar, normalizeString } from './utils';
 
 export function computeEntries(index: number, table: HTMLElement, rankingData: Athlete[]) {
+	createOrUpdateNotificationBar('Pocitam ...');
+
 	const rows = table.querySelectorAll('tr');
 
 	var tableRanking: Athlete[] = [];
@@ -71,6 +73,8 @@ export function computeEntries(index: number, table: HTMLElement, rankingData: A
 // B1 - součet 8 nejlepších výsledků 1. závodníka
 
 export function computeResults(index: number, table: HTMLElement, rankingData: Athlete[]) {
+	createOrUpdateNotificationBar('Pocitam ...');
+
 	const rows = table.querySelectorAll('tr');
 
 	var tableRanking: Athlete[] = [];

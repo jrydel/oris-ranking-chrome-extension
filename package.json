@@ -3,7 +3,7 @@
 	"version": "1.0.0",
 	"license": "MIT",
 	"scripts": {
-		"build": "webpack --config webpack-entries.config.js && webpack --config webpack-results.config.js"
+		"build": "webpack --config webpack-entries.config.js && webpack --config webpack-results.config.js && webpack --config webpack-popup.config.js && webpack --config webpack-background.config.js"
 	},
 	"devDependencies": {
 		"@types/chrome": "^0.0.154",
