@@ -1,8 +1,5 @@
 ## Oris Ranking Chrome extension
 
-* [Co umí?](#Co umí?)
-* [Jak nainstalovat?](#Jak nainstalovat?)
-
 #### Co umí?
 1) V přihláškách v Orisu zobrazit aktuální RankC jednotlivých závodníků, RVP kategorie a závodníky, kteří tvoří RVP. (RVP = průměr 4 závodníků s nejvyšším RankC)
 ![myImage](https://github.com/jrydel/oris-ranking-chrome-extension/blob/master/images/Screenshot%20from%202021-10-25%2020-08-14.png?raw=true)
