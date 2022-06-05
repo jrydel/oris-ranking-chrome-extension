@@ -1,6 +1,6 @@
 import { computeResults } from './scripts/compute';
-import { getEvent, getRanking } from './scripts/fetcher';
-import { createOrUpdateNotificationBar } from './scripts/utils';
+import { getEvent, getRanking, getRankingDates } from './scripts/fetcher';
+import { createOrUpdateNotificationBar, findClosestDate } from './scripts/utils';
 
 async function process() {
 	createOrUpdateNotificationBar('Nacitam data z ORISU ...');
@@ -10,7 +10,9 @@ async function process() {
 
 	const eventYear = parseInt(event.Date.split('-')[0]);
 
-	const ranking = await getRanking(eventYear, event.RankingDecisionDate);
+	const rankingDates = await getRankingDates();
+	const closesDate = findClosestDate(event.Date, rankingDates);
+	const ranking = await getRanking(eventYear, closesDate);
 
 	const tables = document.querySelectorAll('tbody');
 	tables.forEach((table, index) => computeResults(index, table, ranking));

@@ -94,3 +94,10 @@ export function createOrUpdateNotificationBar(text: string) {
 		div.querySelector('span').innerText = text;
 	}
 }
+
+export function findClosestDate(date: string, dates: string[]) {
+	const time = new Date(date).getTime();
+	const filtered = dates.filter(it => time >= new Date(it).getTime());
+	filtered.sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+	return filtered[0];
+}

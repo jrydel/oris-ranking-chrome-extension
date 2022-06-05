@@ -2,7 +2,13 @@ const path = require('path');
 
 module.exports = {
 	mode: 'production',
-	entry: './src/results.ts',
+	entry: {
+		'background': './src/background.ts',
+		'entries': './src/entries.ts',
+		'startlist': './src/startlist.ts',
+		'popup': './src/popup.ts',
+		'results': './src/results.ts'
+	},
 	module: {
 		rules: [
 			{
@@ -16,7 +22,7 @@ module.exports = {
 		extensions: ['.tsx', '.ts', '.js']
 	},
 	output: {
-		filename: 'results.js',
+		filename: '[name].js',
 		path: path.resolve(__dirname, 'dist')
 	}
 };
