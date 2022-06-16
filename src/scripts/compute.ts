@@ -46,6 +46,51 @@ export function computeEntries(index: number, table: HTMLElement, rankingData: A
 	}
 }
 
+export function computeStartList(index: number, table: HTMLElement, rankingData: Athlete[]) {
+	createOrUpdateNotificationBar('Pocitam ...');
+
+	const rows = table.querySelectorAll('tr');
+
+	var tableRanking: Athlete[] = [];
+	rows.forEach(row => {
+		const attributes = row.querySelectorAll('td');
+		const regNumber = normalizeString(attributes[2].textContent);
+		const name = normalizeString(attributes[1].textContent);
+
+		const athleteRanking = rankingData.find(item => item.name === name && item.regNumber === regNumber);
+		if (athleteRanking) {
+			tableRanking.push(athleteRanking);
+		}
+	});
+
+	const rvpCount = 4;
+
+	// sort by ranking
+	tableRanking.sort((a, b) => b.ranking - a.ranking);
+
+	// set rvp makers
+	tableRanking.slice(0, rvpCount).forEach(item => (item.rvp = true));
+
+	// compute rvp
+	const rvp = Math.round(tableRanking.slice(0, rvpCount).reduce((a, b) => a + b.ranking, 0) / Math.min(rvpCount, tableRanking.length));
+
+	// update table
+	rows.forEach(row => {
+		const attributes = row.querySelectorAll('td');
+		const regNumber = normalizeString(attributes[2].textContent);
+		const name = normalizeString(attributes[1].textContent);
+
+		const athlete = rankingData.find(item => item.name === name && item.regNumber === regNumber);
+		if (athlete) {
+			createRVPColumn(attributes[1], athlete);
+		}
+	});
+
+	if (tableRanking.length > 0) {
+		createRVPAverage(document.querySelectorAll(`div.fl.pl-0.pr-0 h3`)[index], rvp);
+	}
+}
+
 // Hodnocení v Rankingu:
 // a) do Rankingu se hodnotí výsledky ze závodů zařazených do Rankingu konaných v období posledních
 // 24 kalendářních měsíců;

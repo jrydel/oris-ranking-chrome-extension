@@ -27,6 +27,11 @@
 			"matches": ["https://oris.orientacnisporty.cz/Vysledky?id=*"],
 			"js": ["results.js"],
 			"css": ["index.css"]
+		},
+		{
+			"matches": ["https://oris.orientacnisporty.cz/Startovka?id=*"],
+			"js": ["startlist.js"],
+			"css": ["index.css"]
 		}
 	],
 	"permissions": ["storage", "alarms"]

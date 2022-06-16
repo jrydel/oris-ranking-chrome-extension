@@ -1,4 +1,4 @@
-import { computeEntries } from './scripts/compute';
+import { computeStartList } from './scripts/compute';
 import { getEvent, getRanking, getRankingDates } from './scripts/fetcher';
 import { createOrUpdateNotificationBar, findClosestDate } from './scripts/utils';
 
@@ -15,7 +15,7 @@ async function process() {
 	const ranking = await getRanking(eventYear, closesDate);
 
 	const tables = document.querySelectorAll('tbody');
-	tables.forEach((table, index) => computeEntries(index, table, ranking));
+	tables.forEach((table, index) => computeStartList(index, table, ranking));
 
 	createOrUpdateNotificationBar('Spocitano');
 }
