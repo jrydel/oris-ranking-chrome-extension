@@ -1,94 +1,101 @@
 import { Athlete } from './types';
-import { createOrUpdateNotificationBar, normalizeString } from './utils';
+import { createOrUpdateNotificationBar, normalizeString, regexEntriesId } from './utils';
 
 export function computeEntries(index: number, table: HTMLElement, rankingData: Athlete[]) {
-	createOrUpdateNotificationBar('Pocitam ...');
+    createOrUpdateNotificationBar('Pocitam ...');
 
-	const rows = table.querySelectorAll('tr');
+    const rows = table.querySelectorAll('tr');
 
-	var tableRanking: Athlete[] = [];
-	rows.forEach(row => {
-		const attributes = row.querySelectorAll('td');
-		const regNumber = normalizeString(attributes[0].textContent);
-		const name = normalizeString(attributes[1].textContent);
+    var tableRanking: Athlete[] = [];
+    rows.forEach((row) => {
+        const el = row.querySelectorAll('td');
+        const href = el[1].querySelector('a')?.getAttribute('href').trim();
+        if (!href) return;
+        const id = parseInt(href.match(regexEntriesId)[0]);
 
-		const athleteRanking = rankingData.find(item => item.name === name && item.regNumber === regNumber);
-		if (athleteRanking) {
-			tableRanking.push(athleteRanking);
-		}
-	});
+        const athlete = rankingData.find((it) => it.id === id);
+        if (athlete) {
+            tableRanking.push(athlete);
+        }
+    });
 
-	const rvpCount = 4;
+    const rvpCount = 4;
 
-	// sort by ranking
-	tableRanking.sort((a, b) => b.ranking - a.ranking);
+    // sort by ranking
+    tableRanking.sort((a, b) => b.ranking - a.ranking);
 
-	// set rvp makers
-	tableRanking.slice(0, rvpCount).forEach(item => (item.rvp = true));
+    // set rvp makers
+    tableRanking.slice(0, rvpCount).forEach((item) => (item.rvp = true));
 
-	// compute rvp
-	const rvp = Math.round(tableRanking.slice(0, rvpCount).reduce((a, b) => a + b.ranking, 0) / Math.min(rvpCount, tableRanking.length));
+    // compute rvp
+    const rvp = Math.round(tableRanking.slice(0, rvpCount).reduce((a, b) => a + b.ranking, 0) / Math.min(rvpCount, tableRanking.length));
 
-	// update table
-	rows.forEach(row => {
-		const attributes = row.querySelectorAll('td');
-		const regNumber = normalizeString(attributes[0].textContent);
-		const name = normalizeString(attributes[1].textContent);
+    // update table
+    rows.forEach((row) => {
+        const el = row.querySelectorAll('td');
+        const href = el[1].querySelector('a')?.getAttribute('href').trim();
+        if (!href) return;
 
-		const athlete = rankingData.find(item => item.name === name && item.regNumber === regNumber);
-		if (athlete) {
-			createRVPColumn(attributes[1], athlete);
-		}
-	});
+        const id = parseInt(href.match(regexEntriesId)[0]);
 
-	if (tableRanking.length > 0) {
-		createRVPAverage(document.querySelectorAll(`div.row.mt-3 h3`)[index], rvp);
-	}
+        const athlete = rankingData.find((it) => it.id === id);
+        if (athlete) {
+            createRVPColumn(el[1], athlete);
+        }
+    });
+
+    if (tableRanking.length > 0) {
+        createRVPAverage(document.querySelectorAll(`div.row.mt-3 h3`)[index], rvp);
+    }
 }
 
 export function computeStartList(index: number, table: HTMLElement, rankingData: Athlete[]) {
-	createOrUpdateNotificationBar('Pocitam ...');
+    createOrUpdateNotificationBar('Pocitam ...');
 
-	const rows = table.querySelectorAll('tr');
+    const rows = table.querySelectorAll('tr');
 
-	var tableRanking: Athlete[] = [];
-	rows.forEach(row => {
-		const attributes = row.querySelectorAll('td');
-		const regNumber = normalizeString(attributes[2].textContent);
-		const name = normalizeString(attributes[1].textContent);
+    var tableRanking: Athlete[] = [];
+    rows.forEach((row) => {
+        const el = row.querySelectorAll('td');
+        const href = el[2].querySelector('a')?.getAttribute('href').trim();
+        if (!href) return;
 
-		const athleteRanking = rankingData.find(item => item.name === name && item.regNumber === regNumber);
-		if (athleteRanking) {
-			tableRanking.push(athleteRanking);
-		}
-	});
+        const id = parseInt(href.match(regexEntriesId)[0]);
 
-	const rvpCount = 4;
+        const athlete = rankingData.find((it) => it.id === id);
+        if (athlete) {
+            tableRanking.push(athlete);
+        }
+    });
 
-	// sort by ranking
-	tableRanking.sort((a, b) => b.ranking - a.ranking);
+    const rvpCount = 4;
 
-	// set rvp makers
-	tableRanking.slice(0, rvpCount).forEach(item => (item.rvp = true));
+    // sort by ranking
+    tableRanking.sort((a, b) => b.ranking - a.ranking);
 
-	// compute rvp
-	const rvp = Math.round(tableRanking.slice(0, rvpCount).reduce((a, b) => a + b.ranking, 0) / Math.min(rvpCount, tableRanking.length));
+    // set rvp makers
+    tableRanking.slice(0, rvpCount).forEach((item) => (item.rvp = true));
 
-	// update table
-	rows.forEach(row => {
-		const attributes = row.querySelectorAll('td');
-		const regNumber = normalizeString(attributes[2].textContent);
-		const name = normalizeString(attributes[1].textContent);
+    // compute rvp
+    const rvp = Math.round(tableRanking.slice(0, rvpCount).reduce((a, b) => a + b.ranking, 0) / Math.min(rvpCount, tableRanking.length));
 
-		const athlete = rankingData.find(item => item.name === name && item.regNumber === regNumber);
-		if (athlete) {
-			createRVPColumn(attributes[1], athlete);
-		}
-	});
+    // update table
+    rows.forEach((row) => {
+        const el = row.querySelectorAll('td');
+        const href = el[2].querySelector('a')?.getAttribute('href').trim();
+        if (!href) return;
 
-	if (tableRanking.length > 0) {
-		createRVPAverage(document.querySelectorAll(`div.fl.pl-0.pr-0 h3`)[index], rvp);
-	}
+        const id = parseInt(href.match(regexEntriesId)[0]);
+
+        const athlete = rankingData.find((it) => it.id === id);
+        if (athlete) {
+            createRVPColumn(el[1], athlete);
+        }
+    });
+
+    if (tableRanking.length > 0) {
+        createRVPAverage(document.querySelectorAll(`div.fl.pl-0.pr-0 h3`)[index], rvp);
+    }
 }
 
 // Hodnocení v Rankingu:
@@ -117,123 +124,137 @@ export function computeStartList(index: number, table: HTMLElement, rankingData:
 // Bi - součet 8 nejlepších výsledků i-tého závodníka
 // B1 - součet 8 nejlepších výsledků 1. závodníka
 
-export function computeResults(index: number, table: HTMLElement, rankingData: Athlete[]) {
-	createOrUpdateNotificationBar('Pocitam ...');
+export function computeResults(table: HTMLElement, rankingData: Athlete[]) {
+    createOrUpdateNotificationBar('Pocitam ...');
 
-	const rows = table.querySelectorAll('tr');
+    const rows = table.querySelectorAll('tr');
 
-	var tableRanking: Athlete[] = [];
+    var tableRanking: Athlete[] = [];
 
-	//filter only for class
-	rows.forEach(row => {
-		const attributes = row.querySelectorAll('td');
-		const position = normalizeString(attributes[0].textContent);
-		const name = normalizeString(attributes[1].textContent);
-		const regNumber = normalizeString(attributes[2].textContent);
-		const time = normalizeString(attributes[5].textContent);
+    //filter only for class
+    rows.forEach((row) => {
+        const el = row.querySelectorAll('td');
+        const position = el[0].textContent.trim();
+        const time = el[5].textContent.trim();
+        const href = el[2].querySelector('a')?.getAttribute('href').trim();
+        if (!href) return;
 
-		const athlete = rankingData.find(item => item.name === name && item.regNumber === regNumber);
-		if (athlete) {
-			if (position.length > 0) {
-				athlete.position = parseInt(position.replace('.', ''));
-				const temp = time.split(':');
-				athlete.time = 60 * parseInt(temp[0]) + parseInt(temp[1]);
-			}
-			tableRanking.push(athlete);
-		}
-	});
+        const id = parseInt(href.match(regexEntriesId)[0]);
 
-	const rvpCount = 4;
-	const averateTimeCount = 3;
-	const finishedLimit = 4;
-	const startCoefficient = 0;
-	const eventCoefficient = 1;
+        const athlete = findOrCreateAthlete(rankingData, id);
+        if (athlete) {
+            if (position.length > 0) {
+                athlete.position = parseInt(position.replace('.', ''));
+                const temp = time.split(':');
+                athlete.time = 60 * parseInt(temp[0]) + parseInt(temp[1]);
+            }
+            tableRanking.push(athlete);
+        }
+    });
 
-	// sort by ranking
-	tableRanking.sort((a, b) => b.ranking - a.ranking);
-	// set rvp makers
-	tableRanking.slice(0, rvpCount).forEach(item => (item.rvp = true));
-	// compute rvp
-	const rvp = Math.round(tableRanking.slice(0, rvpCount).reduce((a, b) => a + b.ranking, 0) / Math.min(rvpCount, tableRanking.length));
+    const rvpCount = 4;
+    const averateTimeCount = 3;
+    const finishedLimit = 4;
+    const startCoefficient = 0;
+    const eventCoefficient = 1;
 
-	// filter only finishers
-	const finishedTableRanking = tableRanking.filter(x => x.position);
-	if (finishedTableRanking.length >= finishedLimit) {
-		// sort by time
-		finishedTableRanking.sort((a, b) => a.time - b.time);
-		// compute averageTime
-		const averageTime = finishedTableRanking.slice(0, averateTimeCount).reduce((a, b) => a + b.time, 0) / averateTimeCount;
+    // sort by ranking
+    tableRanking.sort((a, b) => b.ranking - a.ranking);
+    // set rvp makers
+    tableRanking.slice(0, rvpCount).forEach((item) => (item.rvp = true));
+    // compute rvp
+    const rvp = Math.round(tableRanking.slice(0, rvpCount).reduce((a, b) => a + b.ranking, 0) / Math.min(rvpCount, tableRanking.length));
 
-		// compute ranking
-		finishedTableRanking.forEach(item => {
-			//(2 – CZ/PC) * PB * (1 – KS * (U – 1)/(N – 1)) * KZ
-			const result = (2 - item.time / averageTime) * rvp * (1 - (startCoefficient * (item.position - 1)) / (finishedTableRanking.length - 1)) * eventCoefficient;
-			item.result = result < 0 ? 0 : Math.round(result);
-		});
-	}
-	tableRanking.forEach(item => {
-		const athlete = finishedTableRanking.find(item2 => item.name === item2.name && item.regNumber === item2.regNumber);
-		item.result = athlete?.result || 0;
-	});
+    // filter only finishers
+    const finishedTableRanking = tableRanking.filter((x) => x.position);
+    if (finishedTableRanking.length >= finishedLimit) {
+        // sort by time
+        finishedTableRanking.sort((a, b) => a.time - b.time);
+        // compute averageTime
+        const averageTime = finishedTableRanking.slice(0, averateTimeCount).reduce((a, b) => a + b.time, 0) / averateTimeCount;
 
-	// update table
-	rows.forEach(row => {
-		const attributes = row.querySelectorAll('td');
-		const name = normalizeString(attributes[1].textContent);
-		const regNumber = normalizeString(attributes[2].textContent);
+        // compute ranking
+        finishedTableRanking.forEach((item) => {
+            //(2 – CZ/PC) * PB * (1 – KS * (U – 1)/(N – 1)) * KZ
+            const result =
+                (2 - item.time / averageTime) *
+                rvp *
+                (1 - (startCoefficient * (item.position - 1)) / (finishedTableRanking.length - 1)) *
+                eventCoefficient;
+            item.result = result < 0 ? 0 : Math.round(result);
+        });
+    }
+    tableRanking.forEach((it) => {
+        const athlete = finishedTableRanking.find((it2) => it.id === it2.id);
+        it.result = athlete?.result || 0;
+    });
 
-		const athlete = tableRanking.find(item => item.name === name && item.regNumber === regNumber);
-		if (athlete) {
-			createRVPColumn(attributes[1], athlete);
-			createRankingColumn(attributes[0], athlete);
-		}
-	});
+    // update table
+    rows.forEach((row) => {
+        const el = row.querySelectorAll('td');
+        const href = el[2].querySelector('a')?.getAttribute('href').trim();
+        if (!href) return;
 
-	// if (tableRanking.length > 0) {
-	// 	createRVPAverage(document.querySelectorAll(`div.row.mt-3 h3`)[index], rvp);
-	// }
+        const id = parseInt(href.match(regexEntriesId)[0]);
+
+        const athlete = rankingData.find((it) => it.id === id);
+        if (athlete) {
+            createRVPColumn(el[1], athlete);
+            createRankingColumn(el[0], athlete);
+        }
+    });
 }
 
 function createRVPColumn(td: HTMLElement, athlete: Athlete) {
-	td.classList.add('rvp-container');
+    td.style.display = 'flex';
+    td.style.flexDirection = 'row';
+    td.style.alignItems = 'center';
+    td.style.justifyContent = 'space-between';
 
-	const div = document.createElement('div');
-	div.classList.add('rvp-container');
-	td.appendChild(div);
+    if (athlete.rvp) {
+        td.style.backgroundColor = '#42C0FB';
+    }
 
-	if (athlete.rvp) {
-		const span = document.createElement('span');
-		span.classList.add('rvp-badge');
-		span.textContent = 'RVP';
-		div.appendChild(span);
-	}
-
-	const rvpSpan = document.createElement('span');
-	rvpSpan.innerHTML = `(${athlete.ranking})`;
-	div.appendChild(rvpSpan);
+    const rvpSpan = document.createElement('span');
+    rvpSpan.textContent = `${athlete.ranking}`;
+    rvpSpan.style.fontWeight = 'bold';
+    td.appendChild(rvpSpan);
 }
 
 function createRankingColumn(td: HTMLElement, athlete: Athlete) {
-	td.innerText = '';
+    td.innerHTML = '';
 
-	const div = document.createElement('div');
-	div.classList.add('rvp-container');
-	td.appendChild(div);
+    const div = document.createElement('div');
+    div.style.display = 'flex';
+    div.style.flexDirection = 'row';
+    div.style.alignItems = 'center';
+    div.style.justifyContent = 'space-between';
+    td.appendChild(div);
 
-	const positionSpan = document.createElement('span');
-	positionSpan.textContent = athlete.position ? `${athlete.position}.` : '';
-	div.appendChild(positionSpan);
+    const positionSpan = document.createElement('span');
+    positionSpan.textContent = athlete.position ? `${athlete.position}.` : '';
+    div.appendChild(positionSpan);
 
-	const resultSpan = document.createElement('span');
-	resultSpan.textContent = `(${athlete.result})`;
-	if (athlete.result !== athlete.ranking) {
-		resultSpan.style.color = athlete.result > athlete.ranking ? 'green' : 'red';
-	}
-	div.appendChild(resultSpan);
+    const resultSpan = document.createElement('span');
+    resultSpan.textContent = `${athlete.result}`;
+    resultSpan.style.fontWeight = 'bold';
+    if (athlete.result !== athlete.ranking) {
+        td.style.backgroundColor = athlete.result > athlete.ranking ? 'lightgreen' : '#FFB2B2';
+    }
+    div.appendChild(resultSpan);
 }
 
 function createRVPAverage(el: Element, rvp: number) {
-	const rvpSpan = document.createElement('span');
-	rvpSpan.innerHTML = `(${rvp})`;
-	el.appendChild(rvpSpan);
+    const rvpSpan = document.createElement('span');
+    rvpSpan.innerHTML = `(${rvp})`;
+    el.appendChild(rvpSpan);
+}
+
+function findOrCreateAthlete(athletes: Athlete[], id: number): Athlete {
+    const athlete = athletes.find((it) => it.id === id);
+    if (athlete) return athlete;
+
+    const newAthlete = { id, ranking: 0 };
+    athletes.push(newAthlete);
+    return newAthlete;
 }

@@ -1,15 +1,15 @@
 {
-	"name": "oris-ranking-chrome-extension",
-	"version": "1.0.0",
-	"license": "MIT",
-	"scripts": {
-		"build": "webpack --config webpack-config.js"
-	},
-	"devDependencies": {
-		"@types/chrome": "^0.0.154",
-		"ts-loader": "^9.2.5",
-		"typescript": "^4.3.5",
-		"webpack": "^5.50.0",
-		"webpack-cli": "^4.7.2"
-	}
+    "name": "oris-ranking-chrome-extension",
+    "version": "1.0.0",
+    "license": "MIT",
+    "scripts": {
+        "build": "webpack --config webpack-config.js"
+    },
+    "devDependencies": {
+        "@types/chrome": "^0.0.154",
+        "ts-loader": "^9.2.5",
+        "typescript": "^4.3.5",
+        "webpack": "^5.50.0",
+        "webpack-cli": "^4.7.2"
+    }
 }
