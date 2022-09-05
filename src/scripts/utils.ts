@@ -1,6 +1,22 @@
 export const regexRankingId = /(?<=id=)(.*?)(?=" >)/g;
 export const regexEntriesId = /(?<=id=)(.*)/g;
 
+export const getColNames = (table: HTMLElement) => {
+    const colNames: string[] = [];
+    table.querySelectorAll('thead th').forEach((th) => colNames.push(normalizeString(th.textContent)));
+    return colNames;
+};
+
+export const getColIndex = (cols: string[], ...matches: string[]) => {
+    for (const match of matches) {
+        const index = cols.indexOf(match);
+        if (index !== -1) {
+            return index;
+        }
+    }
+    throw new Error(`Could not find any of the following columns: ${matches.join(', ')}`);
+};
+
 export function normalizeString(text?: string) {
     if (!text) return text;
     return text

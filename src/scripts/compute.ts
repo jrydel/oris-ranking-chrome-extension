@@ -1,15 +1,18 @@
 import { Athlete } from './types';
-import { createOrUpdateNotificationBar, normalizeString, regexEntriesId } from './utils';
+import { createOrUpdateNotificationBar, getColIndex, getColNames, normalizeString, regexEntriesId } from './utils';
 
 export function computeEntries(index: number, table: HTMLElement, rankingData: Athlete[]) {
     createOrUpdateNotificationBar('Pocitam ...');
 
-    const rows = table.querySelectorAll('tr');
+    const colNames = getColNames(table);
+    const colIndexName = getColIndex(colNames, 'name', 'jmeno');
+
+    const rows = table.querySelectorAll('tbody tr');
 
     var tableRanking: Athlete[] = [];
     rows.forEach((row) => {
         const el = row.querySelectorAll('td');
-        const href = el[1].querySelector('a')?.getAttribute('href').trim();
+        const href = el[colIndexName].querySelector('a')?.getAttribute('href').trim();
         if (!href) return;
         const id = parseInt(href.match(regexEntriesId)[0]);
 
@@ -33,14 +36,14 @@ export function computeEntries(index: number, table: HTMLElement, rankingData: A
     // update table
     rows.forEach((row) => {
         const el = row.querySelectorAll('td');
-        const href = el[1].querySelector('a')?.getAttribute('href').trim();
+        const href = el[colIndexName].querySelector('a')?.getAttribute('href').trim();
         if (!href) return;
 
         const id = parseInt(href.match(regexEntriesId)[0]);
 
         const athlete = rankingData.find((it) => it.id === id);
         if (athlete) {
-            createRVPColumn(el[1], athlete);
+            createRVPColumn(el[colIndexName], athlete);
         }
     });
 
@@ -52,12 +55,16 @@ export function computeEntries(index: number, table: HTMLElement, rankingData: A
 export function computeStartList(index: number, table: HTMLElement, rankingData: Athlete[]) {
     createOrUpdateNotificationBar('Pocitam ...');
 
-    const rows = table.querySelectorAll('tr');
+    const rows = table.querySelectorAll('tbody tr');
+
+    const colNames = getColNames(table);
+    const colIndexRegNumber = getColIndex(colNames, 'reg. number', 'reg. cislo');
+    const colIndexName = getColIndex(colNames, 'name', 'jmeno');
 
     var tableRanking: Athlete[] = [];
     rows.forEach((row) => {
         const el = row.querySelectorAll('td');
-        const href = el[2].querySelector('a')?.getAttribute('href').trim();
+        const href = el[colIndexRegNumber].querySelector('a')?.getAttribute('href').trim();
         if (!href) return;
 
         const id = parseInt(href.match(regexEntriesId)[0]);
@@ -82,14 +89,14 @@ export function computeStartList(index: number, table: HTMLElement, rankingData:
     // update table
     rows.forEach((row) => {
         const el = row.querySelectorAll('td');
-        const href = el[2].querySelector('a')?.getAttribute('href').trim();
+        const href = el[colIndexRegNumber].querySelector('a')?.getAttribute('href').trim();
         if (!href) return;
 
         const id = parseInt(href.match(regexEntriesId)[0]);
 
         const athlete = rankingData.find((it) => it.id === id);
         if (athlete) {
-            createRVPColumn(el[1], athlete);
+            createRVPColumn(el[colIndexName], athlete);
         }
     });
 
@@ -127,16 +134,22 @@ export function computeStartList(index: number, table: HTMLElement, rankingData:
 export function computeResults(table: HTMLElement, rankingData: Athlete[]) {
     createOrUpdateNotificationBar('Pocitam ...');
 
-    const rows = table.querySelectorAll('tr');
+    const colNames = getColNames(table);
+    const colPlace = getColIndex(colNames, 'place', 'misto');
+    const colTime = getColIndex(colNames, 'time', 'cas');
+    const colIndexRegNumber = getColIndex(colNames, 'reg. number', 'reg. cislo');
+    const colIndexName = getColIndex(colNames, 'name', 'jmeno');
+
+    const rows = table.querySelectorAll('tbody tr');
 
     var tableRanking: Athlete[] = [];
 
     //filter only for class
     rows.forEach((row) => {
         const el = row.querySelectorAll('td');
-        const position = el[0].textContent.trim();
-        const time = el[5].textContent.trim();
-        const href = el[2].querySelector('a')?.getAttribute('href').trim();
+        const position = el[colPlace].textContent.trim();
+        const time = el[colTime].textContent.trim();
+        const href = el[colIndexRegNumber].querySelector('a')?.getAttribute('href').trim();
         if (!href) return;
 
         const id = parseInt(href.match(regexEntriesId)[0]);
@@ -192,15 +205,15 @@ export function computeResults(table: HTMLElement, rankingData: Athlete[]) {
     // update table
     rows.forEach((row) => {
         const el = row.querySelectorAll('td');
-        const href = el[2].querySelector('a')?.getAttribute('href').trim();
+        const href = el[colIndexRegNumber].querySelector('a')?.getAttribute('href').trim();
         if (!href) return;
 
         const id = parseInt(href.match(regexEntriesId)[0]);
 
         const athlete = rankingData.find((it) => it.id === id);
         if (athlete) {
-            createRVPColumn(el[1], athlete);
-            createRankingColumn(el[0], athlete);
+            createRVPColumn(el[colIndexName], athlete);
+            createRankingColumn(el[colPlace], athlete);
         }
     });
 }

@@ -9,6 +9,6 @@ process(async () => {
     const closesDate = findClosestDate(event.Date, rankingDates);
     const [maleRanking, femaleRanking] = await Promise.all([getRanking(closesDate, 'M'), getRanking(closesDate, 'F')]);
 
-    const tables = document.querySelectorAll('tbody');
+    const tables = document.querySelectorAll('table');
     tables.forEach((table, index) => computeStartList(index, table, [...maleRanking, ...femaleRanking]));
 });
