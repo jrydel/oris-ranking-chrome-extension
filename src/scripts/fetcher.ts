@@ -2,12 +2,12 @@ import { ApiResponse, Athlete, Event } from './types';
 import { regexRankingId } from './utils';
 
 export async function getEvent(eventId: number): Promise<Event> {
-    const data = await requestApi<Event>(`https://oris.orientacnisporty.cz/API/?format=json&method=getEvent&id=${eventId}`);
+    const data = await requestApi<Event>(`https://oris.ceskyorientak.cz/API/?format=json&method=getEvent&id=${eventId}`);
     return data.Data;
 }
 
 export async function getRankingDates() {
-    const response = await request('https://oris.orientacnisporty.cz/Ranking');
+    const response = await request('https://oris.ceskyorientak.cz/Ranking');
     const data = await response.text();
 
     const temp = data.split('<select name="date" id="date" class="form-control form-control-sm mr-5">')[1].split('</select>')[0];
@@ -25,7 +25,7 @@ export async function getRankingDates() {
 
 export async function getRanking(date: string, gender: 'M' | 'F') {
     const response = await request(
-        `https://oris.orientacnisporty.cz/ajax_server?action=getRanking&d=${date}&s=1&g=${gender}&iDisplayStart=0&iDisplayLength=5000`,
+        `https://oris.ceskyorientak.cz/ajax_server?action=getRanking&d=${date}&s=1&g=${gender}&iDisplayStart=0&iDisplayLength=5000`,
     );
     const data = (await response.json()) as { aaData: string[] };
 

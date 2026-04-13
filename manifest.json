@@ -13,17 +13,17 @@
     ],
     "content_scripts": [
         {
-            "matches": ["https://oris.orientacnisporty.cz/PrehledPrihlasenych?id=*"],
+            "matches": ["https://oris.ceskyorientak.cz/PrehledPrihlasenych?id=*"],
             "js": ["entries.js"],
             "css": ["index.css"]
         },
         {
-            "matches": ["https://oris.orientacnisporty.cz/Vysledky?id=*"],
+            "matches": ["https://oris.ceskyorientak.cz/Vysledky?id=*"],
             "js": ["results.js"],
             "css": ["index.css"]
         },
         {
-            "matches": ["https://oris.orientacnisporty.cz/Startovka?id=*"],
+            "matches": ["https://oris.ceskyorientak.cz/Startovka?id=*"],
             "js": ["startlist.js"],
             "css": ["index.css"]
         }
