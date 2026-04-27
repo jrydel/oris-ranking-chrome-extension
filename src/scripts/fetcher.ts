@@ -7,13 +7,16 @@ const RANKTYPE_BY_KIND: Record<RankingType, number> = {
 	sprint: 8,
 };
 
+/** ORIS is served from two host names (orientacnisporty.cz and ceskyorientak.cz); fetch from whichever the page ran on to stay same-origin. */
+const ORIGIN = typeof location !== 'undefined' ? `${location.protocol}//${location.hostname}` : 'https://oris.orientacnisporty.cz';
+
 export async function getEvent(eventId: number): Promise<Event> {
-	const data = await requestApi<Event>(`https://oris.orientacnisporty.cz/API/?format=json&method=getEvent&id=${eventId}`);
+	const data = await requestApi<Event>(`${ORIGIN}/API/?format=json&method=getEvent&id=${eventId}`);
 	return data.Data;
 }
 
 export async function getRankingDates(): Promise<string[]> {
-	const response = await request('https://oris.orientacnisporty.cz/Ranking');
+	const response = await request(`${ORIGIN}/Ranking`);
 	const html = await response.text();
 
 	const doc = new DOMParser().parseFromString(html, 'text/html');
@@ -33,7 +36,7 @@ export async function getRankingDates(): Promise<string[]> {
 
 export async function getRanking(date: string, gender: 'M' | 'F', kind: RankingType = 'forest'): Promise<Athlete[]> {
 	const rt = RANKTYPE_BY_KIND[kind];
-	const response = await request(`https://oris.orientacnisporty.cz/ajax_server?action=getRanking&d=${date}&s=1&g=${gender}&rt=${rt}&iDisplayStart=0&iDisplayLength=5000`);
+	const response = await request(`${ORIGIN}/ajax_server?action=getRanking&d=${date}&s=1&g=${gender}&rt=${rt}&iDisplayStart=0&iDisplayLength=5000`);
 	const data = (await response.json()) as { aaData: string[][] };
 
 	const athletes: Athlete[] = [];
