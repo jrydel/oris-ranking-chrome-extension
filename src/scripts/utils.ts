@@ -8,7 +8,7 @@ export const regexEntriesId = /[?&]id=(\d+)/;
  * `Event.Discipline.ID` (ORIS internal). Anything not listed is not part of
  * either ranking (relays, multi-stage, training, etc.).
  */
-const RANKING_BY_DISCIPLINE: Record<string, RankingType> = {
+const RANKING_BY_DISCIPLINE: Record<string, 'forest' | 'sprint'> = {
 	'1': 'forest', // Dlouhá trať
 	'2': 'forest', // Střední trať
 	'9': 'forest', // Noční
@@ -17,7 +17,12 @@ const RANKING_BY_DISCIPLINE: Record<string, RankingType> = {
 };
 
 export function rankingTypeForEvent(event: Event): RankingType | null {
-	return RANKING_BY_DISCIPLINE[event.Discipline?.ID] ?? null;
+	const kind = RANKING_BY_DISCIPLINE[event.Discipline?.ID];
+	if (!kind) return null;
+	// 2025-era events were scored against the single "Standardní" ranking (rt=1);
+	// the new forest/sprint split started 2026-01-01.
+	if (event.Date < '2026-01-01') return 'legacy';
+	return kind;
 }
 
 export const getColNames = (table: HTMLElement): string[] => {
@@ -76,10 +81,17 @@ export function createOrUpdateNotificationBar(text: string): void {
 	div.appendChild(newSpan);
 }
 
+/**
+ * Pick the ranking snapshot ORIS uses as PB. Per SŘ V.1.c / V.2.c: "stav
+ * k poslednímu dni měsíce předcházejícího konání závodu" — for an event in
+ * May, the April snapshot; for January, December of the previous year.
+ *
+ * Implemented via ISO-string compare to avoid Date timezone pitfalls.
+ */
 export function findClosestDate(date: string, dates: string[]): string | undefined {
-	const time = new Date(date).getTime();
-	const filtered = dates.filter((it) => time >= new Date(it).getTime());
-	filtered.sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+	const firstOfEventMonth = `${date.slice(0, 7)}-01`;
+	const filtered = dates.filter((d) => d < firstOfEventMonth);
+	filtered.sort().reverse();
 	return filtered[0];
 }
 

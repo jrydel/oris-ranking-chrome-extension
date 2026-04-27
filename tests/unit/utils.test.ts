@@ -74,19 +74,26 @@ describe('extractIdFromHref', () => {
 });
 
 describe('findClosestDate', () => {
-	test('returns the most recent date <= the event date', () => {
-		const dates = ['2024-12-01', '2025-01-01', '2025-02-01'];
-		expect(findClosestDate('2025-01-15', dates)).toBe('2025-01-01');
+	test('picks last day of preceding month per SŘ rule', () => {
+		// Event in May → April snapshot, not May.
+		const dates = ['2025-03-31', '2025-04-30', '2025-05-31'];
+		expect(findClosestDate('2025-05-15', dates)).toBe('2025-04-30');
+		expect(findClosestDate('2025-05-31', dates)).toBe('2025-04-30');
 	});
 
-	test('returns undefined if all dates are after the event', () => {
+	test('handles year rollover (January event → December prev-year snapshot)', () => {
+		const dates = ['2025-11-30', '2025-12-31', '2026-01-31'];
+		expect(findClosestDate('2026-01-15', dates)).toBe('2025-12-31');
+	});
+
+	test('returns undefined when no snapshot exists before event month', () => {
 		const dates = ['2025-02-01', '2025-03-01'];
 		expect(findClosestDate('2025-01-15', dates)).toBeUndefined();
 	});
 
-	test('matches an exactly equal date', () => {
-		const dates = ['2024-12-01', '2025-01-01', '2025-02-01'];
-		expect(findClosestDate('2025-01-01', dates)).toBe('2025-01-01');
+	test('first day of month uses preceding-month snapshot', () => {
+		const dates = ['2024-12-31', '2025-01-31'];
+		expect(findClosestDate('2025-01-01', dates)).toBe('2024-12-31');
 	});
 });
 

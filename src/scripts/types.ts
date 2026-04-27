@@ -27,5 +27,9 @@ export type Athlete = {
 	result?: number;
 };
 
-/** The 2026 Soutěžní řád splits ranking into two: V.1 forest and V.2 sprint. */
-export type RankingType = 'forest' | 'sprint';
+/**
+ * The 2026 Soutěžní řád splits ranking into two: V.1 forest and V.2 sprint.
+ * Pre-2026 events were scored against a single combined "Standardní" ranking
+ * which ORIS still serves under `rt=1`, used for backfill viewing.
+ */
+export type RankingType = 'forest' | 'sprint' | 'legacy';

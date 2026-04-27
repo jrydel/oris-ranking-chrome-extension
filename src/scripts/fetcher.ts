@@ -1,8 +1,9 @@
 import type { ApiResponse, Athlete, Event, RankingType } from './types';
 import { regexRankingId } from './utils';
 
-/** ORIS AJAX `rt` parameter mapping for the 2026 split rankings. */
+/** ORIS AJAX `rt` parameter mapping. `rt=1` = legacy combined ranking (≤2025), `rt=2`/`rt=8` = 2026 split. */
 const RANKTYPE_BY_KIND: Record<RankingType, number> = {
+	legacy: 1,
 	forest: 2,
 	sprint: 8,
 };
