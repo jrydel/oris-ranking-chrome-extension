@@ -1,56 +1,69 @@
-import { ApiResponse, Athlete, Event } from './types';
+import type { ApiResponse, Athlete, Event, RankingType } from './types';
 import { regexRankingId } from './utils';
 
+/** ORIS AJAX `rt` parameter mapping for the 2026 split rankings. */
+const RANKTYPE_BY_KIND: Record<Exclude<RankingType, 'none'>, number> = {
+	forest: 2,
+	sprint: 8,
+};
+
 export async function getEvent(eventId: number): Promise<Event> {
-    const data = await requestApi<Event>(`https://oris.orientacnisporty.cz/API/?format=json&method=getEvent&id=${eventId}`);
-    return data.Data;
+	const data = await requestApi<Event>(`https://oris.orientacnisporty.cz/API/?format=json&method=getEvent&id=${eventId}`);
+	return data.Data;
 }
 
-export async function getRankingDates() {
-    const response = await request('https://oris.orientacnisporty.cz/Ranking');
-    const data = await response.text();
+export async function getRankingDates(): Promise<string[]> {
+	const response = await request('https://oris.orientacnisporty.cz/Ranking');
+	const html = await response.text();
 
-    const temp = data.split('<select name="date" id="date" class="form-control form-control-sm mr-5">')[1].split('</select>')[0];
-    const regexp = /\d{4}-\d{2}-\d{2}/g;
-    const matches = temp.matchAll(regexp);
+	const doc = new DOMParser().parseFromString(html, 'text/html');
+	const select = doc.querySelector<HTMLSelectElement>('select#date');
+	if (!select) return [];
 
-    const result: string[] = [];
-    for (const match of matches) {
-        const item = match[0];
-        if (result.indexOf(item) === -1) result.push(item);
-    }
-
-    return result;
+	const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+	const result: string[] = [];
+	select.querySelectorAll('option').forEach((opt) => {
+		const value = opt.getAttribute('value')?.trim();
+		if (value && dateRegex.test(value) && result.indexOf(value) === -1) {
+			result.push(value);
+		}
+	});
+	return result;
 }
 
-export async function getRanking(date: string, gender: 'M' | 'F') {
-    const response = await request(
-        `https://oris.orientacnisporty.cz/ajax_server?action=getRanking&d=${date}&s=1&g=${gender}&iDisplayStart=0&iDisplayLength=5000`,
-    );
-    const data = (await response.json()) as { aaData: string[] };
+export async function getRanking(date: string, gender: 'M' | 'F', kind: Exclude<RankingType, 'none'> = 'forest'): Promise<Athlete[]> {
+	const rt = RANKTYPE_BY_KIND[kind];
+	const response = await request(`https://oris.orientacnisporty.cz/ajax_server?action=getRanking&d=${date}&s=1&g=${gender}&rt=${rt}&iDisplayStart=0&iDisplayLength=5000`);
+	const data = (await response.json()) as { aaData: string[][] };
 
-    return data.aaData.map((it) => {
-        const item: Athlete = {
-            id: parseInt(it[1].match(regexRankingId)[0].trim()),
-            ranking: parseInt(it[4].trim()),
-        };
-        return item;
-    });
+	const athletes: Athlete[] = [];
+	for (const row of data.aaData) {
+		const idMatch = row[1]?.match(regexRankingId);
+		if (!idMatch) continue;
+		const id = parseInt(idMatch[1], 10);
+		const ranking = parseInt(row[4]?.trim() ?? '', 10);
+		if (!Number.isFinite(id)) continue;
+		athletes.push({
+			id,
+			ranking: Number.isFinite(ranking) ? ranking : 0,
+		});
+	}
+	return athletes;
 }
 
-async function request(url: string) {
-    console.log(`oris-ranking-chrome-extension - fetching: ${url}`);
-    return fetch(url, {
-        method: 'GET',
-        headers: {
-            Accept: 'application/json, application/xml, text/plain, text/html, *.*',
-            'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
-        },
-    });
+async function request(url: string): Promise<Response> {
+	console.log(`oris-ranking-chrome-extension - fetching: ${url}`);
+	return fetch(url, {
+		method: 'GET',
+		headers: {
+			Accept: 'application/json, application/xml, text/plain, text/html, *.*',
+			'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
+		},
+	});
 }
 
 async function requestApi<T>(url: string): Promise<ApiResponse<T>> {
-    console.log(`oris-ranking-chrome-extension - fetching: ${url}`);
-    const response = await request(url);
-    return await response.json();
+	console.log(`oris-ranking-chrome-extension - fetching: ${url}`);
+	const response = await request(url);
+	return (await response.json()) as ApiResponse<T>;
 }

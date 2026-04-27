@@ -1,0 +1,28 @@
+name: release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install --frozen-lockfile
+      - run: bun run build
+      - name: Zip dist/
+        run: |
+          cd dist
+          zip -r "../oris-ranking-chrome-extension-${GITHUB_REF_NAME}.zip" .
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: oris-ranking-chrome-extension-*.zip
+          generate_release_notes: true
