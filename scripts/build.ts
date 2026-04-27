@@ -49,21 +49,29 @@ async function main(): Promise<void> {
 
 	let timer: ReturnType<typeof setTimeout> | null = null;
 	let building = false;
+	let pending = false;
 	const debounceMs = 100;
 
-	watch(srcDir, { recursive: true }, () => {
-		if (timer) clearTimeout(timer);
-		timer = setTimeout(async () => {
-			if (building) return;
-			building = true;
+	const rebuild = async (): Promise<void> => {
+		if (building) {
+			pending = true;
+			return;
+		}
+		building = true;
+		do {
+			pending = false;
 			try {
 				await build();
 			} catch (err) {
 				console.error('rebuild failed:', err);
-			} finally {
-				building = false;
 			}
-		}, debounceMs);
+		} while (pending);
+		building = false;
+	};
+
+	watch(srcDir, { recursive: true }, () => {
+		if (timer) clearTimeout(timer);
+		timer = setTimeout(rebuild, debounceMs);
 	});
 }
 

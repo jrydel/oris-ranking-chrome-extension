@@ -2,7 +2,7 @@ import type { ApiResponse, Athlete, Event, RankingType } from './types';
 import { regexRankingId } from './utils';
 
 /** ORIS AJAX `rt` parameter mapping for the 2026 split rankings. */
-const RANKTYPE_BY_KIND: Record<Exclude<RankingType, 'none'>, number> = {
+const RANKTYPE_BY_KIND: Record<RankingType, number> = {
 	forest: 2,
 	sprint: 8,
 };
@@ -31,7 +31,7 @@ export async function getRankingDates(): Promise<string[]> {
 	return result;
 }
 
-export async function getRanking(date: string, gender: 'M' | 'F', kind: Exclude<RankingType, 'none'> = 'forest'): Promise<Athlete[]> {
+export async function getRanking(date: string, gender: 'M' | 'F', kind: RankingType = 'forest'): Promise<Athlete[]> {
 	const rt = RANKTYPE_BY_KIND[kind];
 	const response = await request(`https://oris.orientacnisporty.cz/ajax_server?action=getRanking&d=${date}&s=1&g=${gender}&rt=${rt}&iDisplayStart=0&iDisplayLength=5000`);
 	const data = (await response.json()) as { aaData: string[][] };

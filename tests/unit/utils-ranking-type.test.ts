@@ -24,11 +24,11 @@ describe('rankingTypeForEvent', () => {
 		expect(rankingTypeForEvent(make('16'))).toBe('sprint');
 	});
 
-	test('relays / multi-stage / training etc. → none', () => {
-		expect(rankingTypeForEvent(make('5'))).toBe('none'); // Relays
-		expect(rankingTypeForEvent(make('13'))).toBe('none'); // Multi-stage
-		expect(rankingTypeForEvent(make('15'))).toBe('none'); // Sprint relay
-		expect(rankingTypeForEvent(make('12'))).toBe('none'); // Training
-		expect(rankingTypeForEvent(make('999'))).toBe('none');
+	test('relays / multi-stage / training etc. → null', () => {
+		expect(rankingTypeForEvent(make('5'))).toBeNull(); // Relays
+		expect(rankingTypeForEvent(make('13'))).toBeNull(); // Multi-stage
+		expect(rankingTypeForEvent(make('15'))).toBeNull(); // Sprint relay
+		expect(rankingTypeForEvent(make('12'))).toBeNull(); // Training
+		expect(rankingTypeForEvent(make('999'))).toBeNull();
 	});
 });

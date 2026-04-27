@@ -27,11 +27,5 @@ export type Athlete = {
 	result?: number;
 };
 
-/**
- * Per the 2026 Soutěžní řád (V.1, V.2): forest and sprint are separate rankings.
- * Mapped from {@link Discipline.ID}.
- *  - `forest` (rt=2): Long (1), Middle (2), Night (9)
- *  - `sprint` (rt=8): Sprint (3), Knock-out sprint (16)
- *  - `none`: any other discipline (no preview is shown)
- */
-export type RankingType = 'forest' | 'sprint' | 'none';
+/** The 2026 Soutěžní řád splits ranking into two: V.1 forest and V.2 sprint. */
+export type RankingType = 'forest' | 'sprint';

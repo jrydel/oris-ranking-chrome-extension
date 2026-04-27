@@ -4,16 +4,20 @@ export const regexRankingId = /[?&]id=(\d+)/;
 export const regexEntriesId = /[?&]id=(\d+)/;
 
 /**
- * Pick the 2026 ranking the event belongs to, based on its discipline.
- * - Long (1), Middle (2), Night (9) → forest
- * - Sprint (3), Knock-out sprint (16) → sprint
- * - Anything else (relays, multi-stage, training, …) → none
+ * 2026 Soutěžní řád discipline → ranking mapping. IDs come from
+ * `Event.Discipline.ID` (ORIS internal). Anything not listed is not part of
+ * either ranking (relays, multi-stage, training, etc.).
  */
-export function rankingTypeForEvent(event: Event): RankingType {
-	const id = event.Discipline?.ID;
-	if (id === '1' || id === '2' || id === '9') return 'forest';
-	if (id === '3' || id === '16') return 'sprint';
-	return 'none';
+const RANKING_BY_DISCIPLINE: Record<string, RankingType> = {
+	'1': 'forest', // Dlouhá trať
+	'2': 'forest', // Střední trať
+	'9': 'forest', // Noční
+	'3': 'sprint', // Sprint
+	'16': 'sprint', // Knock-out sprint
+};
+
+export function rankingTypeForEvent(event: Event): RankingType | null {
+	return RANKING_BY_DISCIPLINE[event.Discipline?.ID] ?? null;
 }
 
 export const getColNames = (table: HTMLElement): string[] => {
@@ -39,7 +43,7 @@ export function normalizeString(text?: string | null): string | undefined {
 	if (!text) return undefined;
 	return text
 		.normalize('NFD')
-		.replace(/[̀-ͯ]/g, '')
+		.replace(/[\u0300-\u036f]/g, '')
 		.replace(/ {2}|\r\n|\n|\r/gm, '')
 		.toLowerCase();
 }
@@ -60,16 +64,16 @@ export function createOrUpdateNotificationBar(text: string): void {
 		const span = document.createElement('span');
 		span.textContent = text;
 		div.appendChild(span);
-	} else {
-		const span = div.querySelector('span');
-		if (span) {
-			span.textContent = text;
-		} else {
-			const newSpan = document.createElement('span');
-			newSpan.textContent = text;
-			div.appendChild(newSpan);
-		}
+		return;
 	}
+	const span = div.querySelector('span');
+	if (span) {
+		span.textContent = text;
+		return;
+	}
+	const newSpan = document.createElement('span');
+	newSpan.textContent = text;
+	div.appendChild(newSpan);
 }
 
 export function findClosestDate(date: string, dates: string[]): string | undefined {
@@ -99,18 +103,13 @@ export function parsePosition(text: string | null | undefined): number | null {
 export function parseTime(text: string | null | undefined): number | null {
 	if (!text) return null;
 	const cleaned = text.trim();
-	if (!cleaned) return null;
-	if (!/^\d{1,2}(:\d{2}){1,2}$/.test(cleaned)) return null;
+	if (!cleaned || !/^\d{1,2}(:\d{2}){1,2}$/.test(cleaned)) return null;
 
-	const parts = cleaned.split(':').map((p) => Number(p));
+	const parts = cleaned.split(':').map(Number);
 	if (parts.some((p) => !Number.isFinite(p))) return null;
 
-	if (parts.length === 2) {
-		return parts[0] * 60 + parts[1];
-	}
-	if (parts.length === 3) {
-		return parts[0] * 3600 + parts[1] * 60 + parts[2];
-	}
+	if (parts.length === 2) return parts[0] * 60 + parts[1];
+	if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
 	return null;
 }
 
