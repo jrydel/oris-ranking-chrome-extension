@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+	<meta charset="UTF-8" />
+	<title>ORIS Ranking</title>
+	<style>
+		body {
+			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+			width: 320px;
+			margin: 0;
+			padding: 14px 16px 16px;
+			color: #111827;
+			background: #fff;
+		}
+		h1 {
+			margin: 0 0 6px;
+			font-size: 14px;
+			font-weight: 600;
+		}
+		p {
+			margin: 0 0 10px;
+			font-size: 12px;
+			line-height: 1.45;
+			color: #4b5563;
+		}
+		.legend {
+			display: grid;
+			gap: 6px;
+			margin: 10px 0;
+		}
+		.legend-row {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			font-size: 12px;
+		}
+		.swatch {
+			width: 16px;
+			height: 16px;
+			border-radius: 3px;
+			flex: 0 0 16px;
+		}
+		.swatch.rvp  { background: #bfdbfe; }
+		.swatch.up   { background: #bbf7d0; }
+		.swatch.down { background: #fecaca; }
+		.formula {
+			margin: 8px 0 0;
+			padding: 8px 10px;
+			border-radius: 4px;
+			background: #f3f4f6;
+			font-family: ui-monospace, "SF Mono", Menlo, monospace;
+			font-size: 11px;
+			line-height: 1.5;
+			color: #374151;
+			white-space: pre-wrap;
+		}
+		footer {
+			margin-top: 12px;
+			padding-top: 8px;
+			border-top: 1px solid #e5e7eb;
+			font-size: 11px;
+			color: #6b7280;
+		}
+		footer a { color: #2563eb; text-decoration: none; }
+		footer a:hover { text-decoration: underline; }
+	</style>
+</head>
+<body>
+	<h1>ORIS Ranking</h1>
+	<p>Doplňuje stránky ORISu o aktuální RankC, RVP kategorie a předběžný zisk bodů (BZ).</p>
+
+	<div class="legend">
+		<div class="legend-row"><span class="swatch rvp"></span>RVP – jeden ze čtyř s nejvyšším RankC</div>
+		<div class="legend-row"><span class="swatch up"></span>BZ vyšší než aktuální RankC</div>
+		<div class="legend-row"><span class="swatch down"></span>BZ nižší než aktuální RankC</div>
+	</div>
+
+	<pre class="formula">BZ = (2 − ČZ/PČ) × PB × (1 − KS·(U−1)/(N−1)) × KZ
+PB = průměr 4 nejvyšších RankC účastníků
+PČ = průměrný čas 3 nejlepších v rankingu
+KZ = koeficient závodu, KS = start (interval=0, hromadný=0,15)</pre>
+
+	<footer>
+		<a id="repo" href="https://github.com/jrydel/oris-ranking-chrome-extension" target="_blank" rel="noopener">GitHub repo</a>
+	</footer>
+</body>
+</html>

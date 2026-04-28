@@ -1,6 +1,6 @@
 import { getEvent, getRanking, getRankingDates } from './fetcher';
 import type { Athlete, Event } from './types';
-import { createOrUpdateNotificationBar, findClosestDate, getEventIdFromLocation, rankingTypeForEvent } from './utils';
+import { createOrUpdateNotificationBar, fadeNotificationBar, findClosestDate, getEventIdFromLocation, rankingTypeForEvent } from './utils';
 
 export type BootstrapHandler = (tables: NodeListOf<HTMLTableElement>, ranking: ReadonlyMap<number, Athlete>, event: Event) => void;
 
@@ -19,6 +19,7 @@ export async function bootstrap(handler: BootstrapHandler): Promise<void> {
 		const kind = rankingTypeForEvent(event);
 		if (kind === null) {
 			createOrUpdateNotificationBar('Závod není zařazen do rankingu');
+			fadeNotificationBar(4000);
 			return;
 		}
 
@@ -31,6 +32,7 @@ export async function bootstrap(handler: BootstrapHandler): Promise<void> {
 		createOrUpdateNotificationBar('Počítám…');
 		handler(tables, ranking, event);
 		createOrUpdateNotificationBar('Spočítáno');
+		fadeNotificationBar();
 	} catch (err) {
 		console.error('oris-ranking-chrome-extension error:', err);
 		fail();

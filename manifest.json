@@ -11,6 +11,14 @@
 		"48": "/images/icon.png",
 		"128": "/images/icon.png"
 	},
+	"action": {
+		"default_popup": "popup.html",
+		"default_title": "ORIS Ranking",
+		"default_icon": {
+			"16": "/images/icon.png",
+			"48": "/images/icon.png"
+		}
+	},
 	"web_accessible_resources": [
 		{
 			"resources": ["images/icon.png"],
@@ -21,16 +29,19 @@
 		{
 			"matches": ["https://oris.orientacnisporty.cz/PrehledPrihlasenych?id=*", "https://oris.ceskyorientak.cz/PrehledPrihlasenych?id=*"],
 			"js": ["entries.js"],
+			"css": ["index.css"],
 			"run_at": "document_idle"
 		},
 		{
 			"matches": ["https://oris.orientacnisporty.cz/Vysledky?id=*", "https://oris.ceskyorientak.cz/Vysledky?id=*"],
 			"js": ["results.js"],
+			"css": ["index.css"],
 			"run_at": "document_idle"
 		},
 		{
 			"matches": ["https://oris.orientacnisporty.cz/Startovka?id=*", "https://oris.ceskyorientak.cz/Startovka?id=*"],
 			"js": ["startlist.js"],
+			"css": ["index.css"],
 			"run_at": "document_idle"
 		}
 	]

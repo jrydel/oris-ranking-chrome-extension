@@ -53,12 +53,21 @@ export function normalizeString(text?: string | null): string | undefined {
 		.toLowerCase();
 }
 
+/** Notification bar lifecycle. Single mutable timer covers both the pre-fade wait
+ *  and the post-fade removal so back-to-back updates can't leak a stale removal. */
+let pendingTimer: ReturnType<typeof setTimeout> | null = null;
+
+function cancelTimer(): void {
+	if (pendingTimer) clearTimeout(pendingTimer);
+	pendingTimer = null;
+}
+
 export function createOrUpdateNotificationBar(text: string): void {
+	cancelTimer();
 	let div = document.querySelector<HTMLDivElement>('#rvp-notification-bar');
 	if (!div) {
 		div = document.createElement('div');
 		div.id = 'rvp-notification-bar';
-		div.classList.add('notification-container');
 		document.body.appendChild(div);
 
 		const img = document.createElement('img');
@@ -66,19 +75,25 @@ export function createOrUpdateNotificationBar(text: string): void {
 		img.classList.add('rvp-notification-bar-image');
 		div.appendChild(img);
 
-		const span = document.createElement('span');
-		span.textContent = text;
-		div.appendChild(span);
-		return;
+		div.appendChild(document.createElement('span'));
 	}
+	div.classList.remove('orx-bar-fade');
 	const span = div.querySelector('span');
-	if (span) {
-		span.textContent = text;
-		return;
-	}
-	const newSpan = document.createElement('span');
-	newSpan.textContent = text;
-	div.appendChild(newSpan);
+	if (span) span.textContent = text;
+}
+
+/** Fade out and remove the bar after a delay. Idempotent across calls. */
+export function fadeNotificationBar(delayMs = 2500): void {
+	const div = document.querySelector<HTMLDivElement>('#rvp-notification-bar');
+	if (!div) return;
+	cancelTimer();
+	pendingTimer = setTimeout(() => {
+		div.classList.add('orx-bar-fade');
+		pendingTimer = setTimeout(() => {
+			if (div.classList.contains('orx-bar-fade')) div.remove();
+			pendingTimer = null;
+		}, 500);
+	}, delayMs);
 }
 
 /**
@@ -123,6 +138,18 @@ export function parseTime(text: string | null | undefined): number | null {
 	if (parts.length === 2) return parts[0] * 60 + parts[1];
 	if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
 	return null;
+}
+
+/** Inverse of {@link parseTime}: total seconds → "M:SS" or "H:MM:SS". Returns "–" for 0/missing. */
+export function formatTime(seconds: number): string {
+	if (!seconds) return '–';
+	const s = Math.round(seconds);
+	const h = Math.floor(s / 3600);
+	const m = Math.floor((s % 3600) / 60);
+	const sec = s % 60;
+	const mm = String(m).padStart(2, '0');
+	const ss = String(sec).padStart(2, '0');
+	return h > 0 ? `${h}:${mm}:${ss}` : `${m}:${ss}`;
 }
 
 /** Extract the numeric `id=` value from an ORIS href. Returns null if missing. */

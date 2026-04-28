@@ -1,0 +1,148 @@
+/* All extension styling. The `orx-` prefix isolates from ORIS's CSS.
+   Single light palette — ORIS itself doesn't support dark mode, so following
+   prefers-color-scheme would invert the badges against a still-light page. */
+
+.orx-rvp {
+	/* biome-ignore lint/complexity/noImportantStyles: needs to override ORIS's row styling */
+	background-color: #bfdbfe !important;
+}
+
+/* Inline rank number after athlete name — floats right so values column-align. */
+.orx-rank {
+	float: right;
+	margin-left: 0.45em;
+	font-weight: 500;
+	font-size: 0.92em;
+	font-variant-numeric: tabular-nums;
+	color: #6b7280;
+	animation: orx-fade-in 250ms ease-out;
+}
+
+.orx-rank::before {
+	content: "(";
+}
+.orx-rank::after {
+	content: ")";
+}
+
+.orx-rvp .orx-rank {
+	color: #1e40af;
+	font-weight: 600;
+}
+
+/* Predicted BZ — coloured pill floated to the right edge of the position cell. */
+.orx-bz {
+	float: right;
+	margin-left: 0.5em;
+	padding: 0.1em 0.5em;
+	border-radius: 0.25em;
+	font-weight: 700;
+	font-size: 0.9em;
+	font-variant-numeric: tabular-nums;
+	cursor: help;
+	white-space: nowrap;
+	animation: orx-fade-in 250ms ease-out;
+}
+
+.orx-bz-up {
+	background-color: #bbf7d0;
+	color: #14532d;
+}
+.orx-bz-down {
+	background-color: #fecaca;
+	color: #7f1d1d;
+}
+.orx-bz-eq {
+	background-color: #e5e7eb;
+	color: #4b5563;
+}
+
+/* Column-header annotations — tiny, muted, signals "these cells were augmented". */
+.orx-col-tag {
+	display: inline-block;
+	margin-left: 0.4em;
+	font-size: 0.65em;
+	font-weight: 600;
+	letter-spacing: 0.05em;
+	color: #9ca3af;
+	text-transform: uppercase;
+	vertical-align: middle;
+}
+
+/* Category-heading RVP suffix — "(RVP 7337)". */
+.orx-rvp-avg {
+	margin-left: 0.5em;
+	font-size: 0.7em;
+	font-weight: 600;
+	letter-spacing: 0.03em;
+	color: #6b7280;
+	text-transform: uppercase;
+	vertical-align: middle;
+}
+
+/* Notification bar (bottom-right toast). */
+#rvp-notification-bar {
+	position: fixed;
+	bottom: 16px;
+	right: 16px;
+	z-index: 2147483647;
+	display: flex;
+	align-items: center;
+	gap: 0.5em;
+	padding: 0.5em 0.85em;
+	border-radius: 0.5em;
+	background-color: rgba(31, 41, 55, 0.92);
+	color: #f9fafb;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+	font-size: 0.85em;
+	font-weight: 500;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+	transition:
+		opacity 400ms ease-out,
+		transform 400ms ease-out;
+	animation: orx-slide-in 250ms ease-out;
+}
+
+#rvp-notification-bar.orx-bar-fade {
+	opacity: 0;
+	transform: translateY(8px);
+	pointer-events: none;
+}
+
+.rvp-notification-bar-image {
+	width: 16px;
+	height: 16px;
+	object-fit: contain;
+	border-radius: 2px;
+}
+
+@keyframes orx-fade-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes orx-slide-in {
+	from {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.orx-rank,
+	.orx-bz,
+	#rvp-notification-bar {
+		animation: none;
+	}
+	#rvp-notification-bar {
+		transition: opacity 100ms;
+	}
+}

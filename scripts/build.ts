@@ -10,6 +10,8 @@ const entrypoints = [resolve(srcDir, 'entries.ts'), resolve(srcDir, 'results.ts'
 
 async function copyStaticAssets(): Promise<void> {
 	await cp(resolve(root, 'manifest.json'), resolve(outDir, 'manifest.json'));
+	await cp(resolve(srcDir, 'index.css'), resolve(outDir, 'index.css'));
+	await cp(resolve(srcDir, 'popup.html'), resolve(outDir, 'popup.html'));
 	mkdirSync(resolve(outDir, 'images'), { recursive: true });
 	await cp(resolve(root, 'images/icon.png'), resolve(outDir, 'images/icon.png'));
 }
