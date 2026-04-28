@@ -1,5 +1,5 @@
 import type { Athlete, Event } from './types';
-import { extractIdFromHref, formatTime, getColIndex, getColNames, parsePosition, parseTime } from './utils';
+import { attachTooltip, extractIdFromHref, formatTime, getColIndex, getColNames, parsePosition, parseTime } from './utils';
 
 const RVP_COUNT = 4;
 const PC_COUNT = 3;
@@ -149,12 +149,11 @@ function bzDirection(bz: number, rank: number): Direction {
 }
 
 /** Append a badge span with the given class and text once; second call is a no-op. */
-function appendBadge(parent: Element, className: string, text: string, title?: string): HTMLSpanElement | null {
+function appendBadge(parent: Element, className: string, text: string): HTMLSpanElement | null {
 	if (parent.querySelector(`:scope > .${className.split(' ')[0]}`)) return null;
 	const span = document.createElement('span');
 	span.className = className;
 	span.textContent = text;
-	if (title) span.title = title;
 	parent.appendChild(span);
 	return span;
 }
@@ -175,7 +174,8 @@ type BzContext = { rvp: number; pc: number; ks: number; kz: number; finishers: n
 function appendBzBadge(td: HTMLElement, athlete: Athlete, ctx: BzContext): void {
 	if (athlete.position == null || athlete.result == null) return;
 	const direction = bzDirection(athlete.result, athlete.ranking);
-	appendBadge(td, `orx-bz orx-bz-${direction}`, String(athlete.result), formatTooltip(athlete, ctx));
+	const span = appendBadge(td, `orx-bz orx-bz-${direction}`, String(athlete.result));
+	if (span) attachTooltip(span, formatTooltip(athlete, ctx));
 }
 
 function formatTooltip(athlete: Athlete, ctx: BzContext): string {

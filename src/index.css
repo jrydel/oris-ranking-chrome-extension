@@ -39,9 +39,30 @@
 	font-weight: 700;
 	font-size: 0.9em;
 	font-variant-numeric: tabular-nums;
-	cursor: help;
 	white-space: nowrap;
 	animation: orx-fade-in 250ms ease-out;
+}
+
+/* Custom tooltip — shown instantly on hover, unlike the native title attribute. */
+.orx-tooltip {
+	position: absolute;
+	z-index: 2147483647;
+	max-width: 320px;
+	padding: 0.5em 0.7em;
+	border-radius: 0.35em;
+	background-color: rgba(31, 41, 55, 0.95);
+	color: #f9fafb;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+	font-size: 0.8em;
+	line-height: 1.45;
+	white-space: pre-wrap;
+	pointer-events: none;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+	visibility: hidden;
+}
+
+.orx-tooltip-visible {
+	visibility: visible;
 }
 
 .orx-bz-up {
@@ -139,6 +160,7 @@
 @media (prefers-reduced-motion: reduce) {
 	.orx-rank,
 	.orx-bz,
+	.orx-tooltip,
 	#rvp-notification-bar {
 		animation: none;
 	}

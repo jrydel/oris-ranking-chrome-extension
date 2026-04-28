@@ -2,7 +2,7 @@
 	"name": "ORIS Ranking",
 	"short_name": "ORIS Ranking",
 	"description": "Zobrazuje aktuální RankC, RVP kategorie a předběžný zisk bodů na stránkách ORIS.",
-	"version": "2.0.0",
+	"version": "2.0.1",
 	"manifest_version": 3,
 	"minimum_chrome_version": "130",
 	"homepage_url": "https://github.com/jrydel/oris-ranking-chrome-extension",

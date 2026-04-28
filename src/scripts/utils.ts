@@ -96,6 +96,43 @@ export function fadeNotificationBar(delayMs = 2500): void {
 	}, delayMs);
 }
 
+/** Single shared instant-tooltip element (the native `title` attribute has a ~500ms browser delay). */
+let tooltipEl: HTMLDivElement | null = null;
+
+function getTooltipEl(): HTMLDivElement {
+	if (tooltipEl?.isConnected) return tooltipEl;
+	tooltipEl = document.createElement('div');
+	tooltipEl.className = 'orx-tooltip';
+	document.body.appendChild(tooltipEl);
+	return tooltipEl;
+}
+
+function positionTooltip(t: HTMLElement, target: HTMLElement): void {
+	const rect = target.getBoundingClientRect();
+	const tRect = t.getBoundingClientRect();
+	const vw = document.documentElement.clientWidth;
+	let left = rect.left + window.scrollX + rect.width / 2 - tRect.width / 2;
+	let top = rect.top + window.scrollY - tRect.height - 8;
+	if (rect.top - tRect.height - 8 < 0) top = rect.bottom + window.scrollY + 8;
+	if (left < window.scrollX + 4) left = window.scrollX + 4;
+	const maxLeft = window.scrollX + vw - tRect.width - 4;
+	if (left > maxLeft) left = maxLeft;
+	t.style.left = `${left}px`;
+	t.style.top = `${top}px`;
+}
+
+export function attachTooltip(target: HTMLElement, text: string): void {
+	target.addEventListener('mouseenter', () => {
+		const t = getTooltipEl();
+		t.textContent = text;
+		t.classList.add('orx-tooltip-visible');
+		positionTooltip(t, target);
+	});
+	target.addEventListener('mouseleave', () => {
+		tooltipEl?.classList.remove('orx-tooltip-visible');
+	});
+}
+
 /**
  * Pick the ranking snapshot ORIS uses as PB. Per SŘ V.1.c / V.2.c: "stav
  * k poslednímu dni měsíce předcházejícího konání závodu" — for an event in
